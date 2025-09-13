@@ -1,0 +1,247 @@
+<template>
+  <div class="min-h-screen bg-[#f0f9f9] flex flex-col items-center  py-12 px-6">
+    <!-- Uploads -->
+    <div class="grid gap-4 w-full  place-items-center md:grid-cols-2">
+      <!-- Query Upload -->
+      <div
+        class="p-6 border-2 border-dashed h-[450px] w-[500px] border-green-400 rounded-lg bg-white flex flex-col items-center"
+      >
+        <h2 v-if="!queryImage" class="font-semibold text-lg mb-3">Upload Left Image</h2>
+        <label
+          for="query-upload"
+          class="cursor-pointer text-center text-gray-600 hover:text-green-600"
+        >
+          <p class="text-sm">Click to upload or drag & drop</p>
+          <input
+            id="query-upload"
+            type="file"
+            class="hidden"
+            accept="image/*"
+            @change="handleFileUpload($event, 'query')"
+          />
+        </label>
+        <div v-if="queryImage" class="mt-4">
+          <img
+            :src="queryImage"
+            alt="Query preview"
+            class="h-[300px]  rounded-md shadow-md"
+          />
+        </div>
+      </div>
+
+      <!-- Target Upload -->
+      <div
+        class="p-6 border-2 border-dashed h-[450px] w-[500px] border-green-400 rounded-lg bg-white flex flex-col items-center"
+      >
+        <h2 v-if="!targetImage" class="font-semibold text-lg mb-3">Upload Right Image</h2>
+        <label
+          for="target-upload"
+          class="cursor-pointer text-center text-gray-600 hover:text-green-600"
+        >
+          <p class="text-sm">Click to upload or drag & drop</p>
+          <input
+            id="target-upload"
+            type="file"
+            class="hidden"
+            accept="image/*"
+            @change="handleFileUpload($event, 'target')"
+          />
+        </label>
+        <div v-if="targetImage" class="mt-4">
+          <img
+            :src="targetImage"
+            alt="Target preview"
+            class="h-[300px] rounded-md shadow-md"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Algorithm select -->
+    <div class="w-full max-w-2xl mt-8">
+      <label class="block text-gray-700 mb-2 font-medium">Select Algorithm</label>
+      <select
+        v-model="selectedAlgorithm"
+        class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500"
+      >
+        <option disabled value="">-- Choose an algorithm --</option>
+      <option value="fast">FAST</option>
+<option value="orb">ORB</option>
+<option value="sift">SIFT</option>
+<option value="akaze">AKAZE</option>
+>
+      </select>
+    </div>
+
+    <!-- Match button -->
+    <button
+      class="mt-6 px-6 py-3 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 disabled:opacity-50"
+      :disabled="!queryFile || !targetFile || !selectedAlgorithm || loading"
+      @click="submitForMatching"
+    >
+      {{ loading ? "Processing..." : "Find Match" }}
+    </button>
+
+    <!-- Results -->
+    <div v-if="resultImages.length" class="mt-10 w-full max-w-5xl">
+      <h2 class="text-xl font-bold text-gray-800 mb-6 text-center">Results</h2>
+
+      <!-- Images -->
+      <div class="grid gap-6 md:grid-cols-2">
+        <div
+          v-for="(img, idx) in resultImages"
+          :key="idx"
+          class="p-4 bg-white rounded-lg h-[400px] shadow text-center cursor-pointer"
+          @click="openModal(img)"
+        >
+          <img
+            :src="img.data"
+            :alt="img.name"
+            class=" mx-auto  rounded-md hover:scale-105 transition"
+          />
+          <p class="mt-2 h-full w-full object-cover object-center text-sm text-gray-600">{{ img.name }}</p>
+        </div>
+      </div>
+
+      <!-- Metrics -->
+      <div v-if="metricsText" class="mt-10 p-6 bg-white rounded-lg shadow">
+        <h3 class="font-semibold text-lg mb-3">Evaluation Metrics</h3>
+        <pre class="text-sm text-gray-700 whitespace-pre-wrap">{{ metricsText }}</pre>
+      </div>
+    </div>
+
+
+<div class="mt-6 text-center">
+    <button
+      @click="downloadZip"
+      class="px-6 py-3 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700"
+    >
+      Download Full Results (ZIP)
+    </button>
+  </div>
+    <!-- 🔹 Modal -->
+    <div
+      v-if="selectedImage"
+      class="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+      @click.self="closeModal"
+    >
+      <div class="bg-white h-[500px] p-4 rounded-lg max-w-4xl w-full relative">
+        <!-- Close button -->
+        <button
+          @click="closeModal"
+          class="absolute top-2 right-2 text-gray-600 hover:text-red-600 text-2xl"
+        >
+          ✕
+        </button>
+        <h2 class="text-lg font-bold mb-3 text-center">
+          {{ selectedImage.name }}
+        </h2>
+        <img
+          :src="selectedImage.data"
+          :alt="selectedImage.name"
+          class="h-[400px] w-auto mx-auto rounded shadow"
+        />
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref } from "vue";
+import JSZip from "jszip";
+
+const queryImage = ref(null);
+const targetImage = ref(null);
+const queryFile = ref(null);
+const targetFile = ref(null);
+
+
+const selectedAlgorithm = ref("");
+const loading = ref(false);
+const zipBlob = ref(null);
+const resultImages = ref([]);
+const metricsText = ref(null);
+
+const selectedImage = ref(null);
+
+function openModal(img) {
+  selectedImage.value = img;
+}
+
+function closeModal() {
+  selectedImage.value = null;
+}
+
+// Handle uploads
+function handleFileUpload(event, type) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (type === "query") {
+    queryFile.value = file;
+    queryImage.value = URL.createObjectURL(file);
+  } else {
+    targetFile.value = file;
+    targetImage.value = URL.createObjectURL(file);
+  }
+}
+
+// API call
+async function submitForMatching() {
+  loading.value = true;
+  resultImages.value = [];
+  metricsText.value = null;
+  zipBlob.value = null; // reset
+
+  try {
+    const formData = new FormData();
+    formData.append("left", queryFile.value);
+    formData.append("right", targetFile.value);
+    formData.append("detection_algorithm", selectedAlgorithm.value);
+
+    const res = await fetch("http://127.0.0.1:8000/register", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!res.ok) throw new Error("API error");
+    const blob = await res.blob();
+    zipBlob.value = blob; // ✅ keep the zip file
+
+    // unzip
+    const zip = await JSZip.loadAsync(blob);
+    for (const filename of Object.keys(zip.files)) {
+      const file = zip.files[filename];
+
+      if (
+        filename === "registered_output.jpg" ||
+        filename === "matched_keypoints.jpg"
+      ) {
+        const content = await file.async("base64");
+        resultImages.value.push({
+          name: filename,
+          data: `data:image/jpeg;base64,${content}`,
+        });
+      } else if (filename === "evaluation_metrics.txt") {
+        metricsText.value = await file.async("string");
+      }
+    }
+  } catch (err) {
+    console.error("❌ Matching failed:", err);
+  } finally {
+    loading.value = false;
+  }
+}
+
+
+function downloadZip() {
+  if (!zipBlob.value) return;
+  const url = URL.createObjectURL(zipBlob.value);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "registration_result.zip";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+</script>
