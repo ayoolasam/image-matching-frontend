@@ -4,7 +4,7 @@
     <div class="grid gap-4 w-full  place-items-center md:grid-cols-2">
       <!-- Query Upload -->
       <div
-        class="p-6 border-2 border-dashed h-[450px] w-[500px] border-green-400 rounded-lg bg-white flex flex-col items-center"
+        class="p-6 border-2 border-dashed h-[450px] w-full lg:w-[500px] border-green-400 rounded-lg bg-white flex flex-col items-center"
       >
         <h2 v-if="!queryImage" class="font-semibold text-lg mb-3">Upload Left Image</h2>
         <label
@@ -31,7 +31,7 @@
 
       <!-- Target Upload -->
       <div
-        class="p-6 border-2 border-dashed h-[450px] w-[500px] border-green-400 rounded-lg bg-white flex flex-col items-center"
+        class="p-6 border-2 border-dashed h-[450px] w-full lg:w-[500px] border-green-400 rounded-lg bg-white flex flex-col items-center"
       >
         <h2 v-if="!targetImage" class="font-semibold text-lg mb-3">Upload Right Image</h2>
         <label
@@ -154,6 +154,8 @@ const queryImage = ref(null);
 const targetImage = ref(null);
 const queryFile = ref(null);
 const targetFile = ref(null);
+const config = useRuntimeConfig();
+const processingApi = config.public.API_URL;
 
 
 const selectedAlgorithm = ref("");
@@ -198,7 +200,7 @@ async function submitForMatching() {
     formData.append("right", targetFile.value);
     formData.append("detection_algorithm", selectedAlgorithm.value);
 
-    const res = await fetch("http://127.0.0.1:8000/register", {
+    const res = await  fetch(`${processingApi}/register`,{
       method: "POST",
       body: formData,
     });
@@ -226,7 +228,7 @@ async function submitForMatching() {
       }
     }
   } catch (err) {
-    console.error("❌ Matching failed:", err);
+    console.error("❌ Matching failed:", err.message);
   } finally {
     loading.value = false;
   }

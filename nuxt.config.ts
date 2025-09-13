@@ -10,4 +10,10 @@ export default defineNuxtConfig({
       tailwindcss(),
     ],
   },
+    runtimeConfig: {
+    public: {
+      API_URL:  import.meta.env.NUXT_PUBLIC_API_URL,
+     
+    },
+  },
 })
