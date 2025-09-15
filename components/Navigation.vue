@@ -1,13 +1,13 @@
 <template>
-  <nav class="bg-white shadow-md">
+  <nav class="bg-[#1E201E] py-2 shadow-md">
     <div class="max-w-6xl mx-auto px-4 flex justify-between items-center h-[70px]">
       <!-- Logo / Title -->
-      <h1 class="text-2xl font-bold text-green-600 flex items-center gap-2">
-        🖼️ Image Tool
+      <h1 class=" text-md lg:text-2xl font-bold text-green-600 flex items-center gap-2">
+        Image Matching Tool
       </h1>
 
       <!-- Links -->
-      <ul class="flex space-x-6 text-gray-600 font-medium">
+      <ul class="flex flex-col gap-4 lg:flex-row space-x-6 text-white font-medium">
         <li>
           <RouterLink
             to="/image-matching"

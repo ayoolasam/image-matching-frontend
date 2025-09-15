@@ -1,15 +1,16 @@
 <template>
-  <div class="min-h-screen bg-[#f0f9f9] flex flex-col items-center  py-12 px-6">
+  <div class="min-h-screen bg-[#1E201E] flex flex-col items-center  py-12 px-6">
     <!-- Uploads -->
     <div class="grid gap-4 w-full  place-items-center md:grid-cols-2">
       <!-- Query Upload -->
-      <div
-        class="p-6 border-2 border-dashed h-[450px] w-full lg:w-[500px] border-green-400 rounded-lg bg-white flex flex-col items-center"
+      <label
+       for="query-upload"
+        class="p-6 border-2 cursor-pointer hover:border-green-600  h-[450px] w-full lg:w-[500px] border-green-400 rounded-lg bg-[#183D3D] flex flex-col items-center"
       >
-        <h2 v-if="!queryImage" class="font-semibold text-lg mb-3">Upload Left Image</h2>
+        <h2 v-if="!queryImage" class="font-semibold text-white text-lg mb-3">Upload Left Image</h2>
         <label
           for="query-upload"
-          class="cursor-pointer text-center text-gray-600 hover:text-green-600"
+          class="cursor-pointer text-center text-white hover:text-green-600"
         >
           <p class="text-sm">Click to upload or drag & drop</p>
           <input
@@ -27,16 +28,17 @@
             class="h-[300px]  rounded-md shadow-md"
           />
         </div>
-      </div>
+      </label>
 
       <!-- Target Upload -->
-      <div
-        class="p-6 border-2 border-dashed h-[450px] w-full lg:w-[500px] border-green-400 rounded-lg bg-white flex flex-col items-center"
+      <label
+      for="target-upload"
+        class="p-6 border-2 cursor-pointer hover:border-green-600  h-[450px] w-full lg:w-[500px] border-green-400 rounded-lg bg-[#183D3D] flex flex-col items-center"
       >
-        <h2 v-if="!targetImage" class="font-semibold text-lg mb-3">Upload Right Image</h2>
+        <h2 v-if="!targetImage" class="font-semibold text-white text-lg mb-3">Upload Right Image</h2>
         <label
           for="target-upload"
-          class="cursor-pointer text-center text-gray-600 hover:text-green-600"
+          class="cursor-pointer text-center text-white hover:text-green-600"
         >
           <p class="text-sm">Click to upload or drag & drop</p>
           <input
@@ -54,17 +56,17 @@
             class="h-[300px] rounded-md shadow-md"
           />
         </div>
-      </div>
+      </label>
     </div>
 
     <!-- Algorithm select -->
     <div class="w-full max-w-2xl mt-8">
-      <label class="block text-gray-700 mb-2 font-medium">Select Algorithm</label>
+      <label class="block text-white mb-2 font-medium">Select Algorithm</label>
       <select
         v-model="selectedAlgorithm"
-        class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500"
+        class="w-full p-3 border border-green-500 rounded-md text-white focus:outline-none"
       >
-        <option disabled value="">-- Choose an algorithm --</option>
+        <option disabled  value=""> Choose an algorithm </option>
       <option value="fast">FAST</option>
 <option value="orb">ORB</option>
 <option value="sift">SIFT</option>
@@ -75,7 +77,7 @@
 
     <!-- Match button -->
     <button
-      class="mt-6 px-6 py-3 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 disabled:opacity-50"
+      class="mt-6 px-6 py-3 bg-transaprent border-green-500 border text-white font-semibold rounded-md hover:bg-green-700  disabled:opacity-50"
       :disabled="!queryFile || !targetFile || !selectedAlgorithm || loading"
       @click="submitForMatching"
     >
@@ -84,29 +86,29 @@
 
     <!-- Results -->
     <div v-if="resultImages.length" class="mt-10 w-full max-w-5xl">
-      <h2 class="text-xl font-bold text-gray-800 mb-6 text-center">Results</h2>
+      <h2 class="text-xl font-bold text-white mb-6 text-center">Results</h2>
 
       <!-- Images -->
-      <div class="grid gap-6 md:grid-cols-2">
+      <div class="grid gap-4 md:grid-cols-2">
         <div
           v-for="(img, idx) in resultImages"
           :key="idx"
-          class="p-4 bg-white rounded-lg h-[400px] shadow text-center cursor-pointer"
+          class="p-4 bg-[#183D3D] rounded-lg h-[500px] gap-2 shadow text-center cursor-pointer"
           @click="openModal(img)"
         >
           <img
             :src="img.data"
             :alt="img.name"
-            class=" mx-auto  rounded-md hover:scale-105 transition"
+            class=" mx-auto h-[440px] w-full  rounded-md hover:scale-105 transition"
           />
-          <p class="mt-2 h-full w-full object-cover object-center text-sm text-gray-600">{{ img.name }}</p>
+          <p class=" mt-2  w-full  object-center text-sm text-white">{{ img.name }}</p>
         </div>
       </div>
 
       <!-- Metrics -->
-      <div v-if="metricsText" class="mt-10 p-6 bg-white rounded-lg shadow">
-        <h3 class="font-semibold text-lg mb-3">Evaluation Metrics</h3>
-        <pre class="text-sm text-gray-700 whitespace-pre-wrap">{{ metricsText }}</pre>
+      <div v-if="metricsText" class="mt-10 p-6 bg-[#183D3D]  rounded-lg shadow">
+        <h3 class="font-semibold text-lg text-white mb-3">Evaluation Metrics</h3>
+        <pre class="text-sm text-white  whitespace-pre-wrap">{{ metricsText }}</pre>
       </div>
     </div>
 
@@ -114,7 +116,7 @@
 <div class="mt-6 text-center">
     <button
       @click="downloadZip"
-      class="px-6 py-3 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700"
+      class="px-6 py-3 border-green-500 border text-white font-semibold rounded-md hover:bg-green-700"
     >
       Download Full Results (ZIP)
     </button>
@@ -125,21 +127,21 @@
       class="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
       @click.self="closeModal"
     >
-      <div class="bg-white h-[500px] p-4 rounded-lg max-w-4xl w-full relative">
+      <div class="bg-[#183D3D] h-[500px] p-4 rounded-lg max-w-4xl w-full relative">
         <!-- Close button -->
         <button
           @click="closeModal"
-          class="absolute top-2 right-2 text-gray-600 hover:text-red-600 text-2xl"
+          class="absolute top-2 right-2 text-white hover:text-red-600 text-2xl"
         >
           ✕
         </button>
-        <h2 class="text-lg font-bold mb-3 text-center">
+        <h2 class="text-lg text-white font-bold mb-3 text-center">
           {{ selectedImage.name }}
         </h2>
         <img
           :src="selectedImage.data"
           :alt="selectedImage.name"
-          class="h-[400px] w-auto mx-auto rounded shadow"
+          class="h-[400px] w-full mx-auto rounded shadow"
         />
       </div>
     </div>

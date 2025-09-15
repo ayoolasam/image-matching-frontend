@@ -1,26 +1,27 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex flex-col items-center py-12 px-4">
+  <div class="min-h-screen bg-[#1E201E] flex flex-col items-center py-12 px-4">
     <!-- Title -->
-    <h1 class="text-2xl md:text-3xl font-extrabold text-gray-800 mb-6">
+    <h1 class="text-2xl md:text-3xl font-extrabold text-white mb-6">
       Image Coordinate Picker
     </h1>
 
     <!-- Upload Section -->
     <label
-      class="cursor-pointer border-2 border-dashed border-green-400 bg-white rounded-xl p-8 w-[800px]  flex flex-col items-center shadow-md hover:shadow-lg transition"
+      class="cursor-pointer border-2 border-green-400 bg-[#183D3D] rounded-xl p-8 w-full lg:w-[700px] flex flex-col items-center shadow-md hover:shadow-lg transition"
     >
-      <p class="text-gray-600 font-medium mb-2">Click to upload or drag & drop</p>
+      <p class="text-white font-medium mb-2">Click to upload or drag & drop</p>
       <input
         type="file"
         accept="image/*"
         class="hidden"
         @change="handleFileUpload"
+        
       />
-      <div v-if="!imageSrc" class="text-sm text-gray-400">No image uploaded</div>
+      <div v-if="!imageSrc" class="text-sm  text-gray-400">No image uploaded</div>
     </label>
 
     <!-- Image Viewer -->
-    <div v-if="imageSrc" class="mt-8 w-full max-w-4xl">
+    <div v-if="imageSrc" class="mt-8 w-full max-w-3xl">
       <div class="relative border rounded-xl shadow-lg bg-white overflow-hidden">
         <img
           ref="imageRef"
