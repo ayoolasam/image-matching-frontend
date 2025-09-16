@@ -3,7 +3,7 @@
     <div class="max-w-6xl mx-auto px-4 flex justify-between items-center h-[70px]">
       <!-- Logo / Title -->
       <h1 class=" text-md lg:text-2xl font-bold text-green-600 flex items-center gap-2">
-        Image Matching Tool
+        Image Registration Tool
       </h1>
 
       <!-- Links -->
@@ -24,6 +24,15 @@
             active-class="text-green-600 font-semibold border-b-2 border-green-600"
           >
             Get Coordinates
+          </RouterLink>
+        </li>
+         <li>
+          <RouterLink
+            to="/distance-measuring"
+            class="hover:text-green-600 transition"
+            active-class="text-green-600 font-semibold border-b-2 border-green-600"
+          >
+         Distance Measuring
           </RouterLink>
         </li>
       </ul>
