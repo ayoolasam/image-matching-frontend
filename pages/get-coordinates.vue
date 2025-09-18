@@ -15,9 +15,8 @@
         accept="image/*"
         class="hidden"
         @change="handleFileUpload"
-        
       />
-      <div v-if="!imageSrc" class="text-sm  text-gray-400">No image uploaded</div>
+      <div v-if="!imageSrc" class="text-sm text-gray-400">No image uploaded</div>
     </label>
 
     <!-- Image Viewer -->
@@ -77,6 +76,16 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Download Button -->
+      <div class="mt-6 text-center">
+        <button
+          @click="downloadCSV"
+          class="px-6 py-3 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 transition"
+        >
+          Download CSV
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -116,5 +125,26 @@ function getCoordinates(event) {
   const y = Math.round(displayY * scaleY);
 
   clickedPoints.value.push({ x, y, displayX, displayY });
+}
+
+// Download CSV
+function downloadCSV() {
+  if (!clickedPoints.value.length) return;
+
+  // Build CSV string
+  let csvContent = "data:text/csv;charset=utf-8,";
+  csvContent += "Index,X,Y\n";
+  clickedPoints.value.forEach((pt, idx) => {
+    csvContent += `${idx + 1},${pt.x},${pt.y}\n`;
+  });
+
+  // Create blob link and download
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", "coordinates.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
 </script>

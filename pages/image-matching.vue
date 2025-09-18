@@ -78,14 +78,14 @@
       </select>
     </div>
 
-    <!-- Match + Reset buttons -->
+    <!-- Process + Reset buttons -->
     <div class="mt-6 flex gap-4">
       <button
         class="px-6 py-3 bg-transparent border-green-500 border text-white font-semibold rounded-md hover:bg-green-700 disabled:opacity-50"
         :disabled="!queryFile || !targetFile || !selectedAlgorithm || loading"
         @click="submitForMatching"
       >
-        {{ loading ? "Processing..." : "Find Match" }}
+        {{ loading ? "Processing..." : "Process Images" }}
       </button>
 
       <button
@@ -97,32 +97,31 @@
       </button>
     </div>
 
-    <!-- Results -->
-    <div v-if="resultImages.length" class="mt-10 w-full max-w-5xl">
-      <h2 class="text-xl font-bold text-white mb-6 text-center">Results</h2>
+    <!-- Show result buttons -->
+    <div
+      v-if="resultImages.length"
+      class="mt-6 flex gap-4 flex-wrap justify-center"
+    >
+      <button
+        v-if="registeredImage"
+        @click="openModal(registeredImage)"
+        class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700"
+      >
+        Show Registered Image
+      </button>
+      <button
+        v-if="matchedImage"
+        @click="openModal(matchedImage)"
+        class="px-6 py-3 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700"
+      >
+        Show Matched Keypoints
+      </button>
+    </div>
 
-      <!-- Images -->
-      <div class="grid gap-4 md:grid-cols-2">
-        <div
-          v-for="(img, idx) in resultImages"
-          :key="idx"
-          class="p-4 bg-[#183D3D] rounded-lg h-[500px] gap-2 shadow text-center cursor-pointer"
-          @click="openModal(img)"
-        >
-          <img
-            :src="img.data"
-            :alt="img.name"
-            class="mx-auto h-[440px] w-full rounded-md hover:scale-105 transition"
-          />
-          <p class="mt-2 text-sm text-white">{{ img.name }}</p>
-        </div>
-      </div>
-
-      <!-- Metrics -->
-      <div v-if="metricsText" class="mt-10 p-6 bg-[#183D3D] rounded-lg shadow">
-        <h3 class="font-semibold text-lg text-white mb-3">Evaluation Metrics</h3>
-        <pre class="text-sm text-white whitespace-pre-wrap">{{ metricsText }}</pre>
-      </div>
+    <!-- Metrics -->
+    <div v-if="metricsText" class="mt-10 p-6 bg-[#183D3D] rounded-lg shadow max-w-3xl w-full">
+      <h3 class="font-semibold text-lg text-white mb-3">Evaluation Metrics</h3>
+      <pre class="text-sm text-white whitespace-pre-wrap">{{ metricsText }}</pre>
     </div>
 
     <!-- Download ZIP -->
@@ -179,6 +178,9 @@ const resultImages = ref([]);
 const metricsText = ref(null);
 const selectedImage = ref(null);
 
+const registeredImage = ref(null);
+const matchedImage = ref(null);
+
 function openModal(img) {
   selectedImage.value = img;
 }
@@ -205,6 +207,8 @@ async function submitForMatching() {
   resultImages.value = [];
   metricsText.value = null;
   zipBlob.value = null;
+  registeredImage.value = null;
+  matchedImage.value = null;
 
   try {
     const formData = new FormData();
@@ -226,15 +230,20 @@ async function submitForMatching() {
     for (const filename of Object.keys(zip.files)) {
       const file = zip.files[filename];
 
-      if (
-        filename === "registered_output.jpg" ||
-        filename === "matched_keypoints.jpg"
-      ) {
+      if (filename === "registered_output.jpg") {
         const content = await file.async("base64");
-        resultImages.value.push({
-          name: filename,
+        registeredImage.value = {
+          name: "Registered Image",
           data: `data:image/jpeg;base64,${content}`,
-        });
+        };
+        resultImages.value.push(registeredImage.value);
+      } else if (filename === "matched_keypoints.jpg") {
+        const content = await file.async("base64");
+        matchedImage.value = {
+          name: "Matched Keypoints",
+          data: `data:image/jpeg;base64,${content}`,
+        };
+        resultImages.value.push(matchedImage.value);
       } else if (filename === "evaluation_metrics.txt") {
         metricsText.value = await file.async("string");
       }
@@ -270,5 +279,7 @@ function resetAll() {
   resultImages.value = [];
   metricsText.value = null;
   selectedImage.value = null;
+  registeredImage.value = null;
+  matchedImage.value = null;
 }
 </script>

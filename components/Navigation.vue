@@ -14,7 +14,7 @@
             class="hover:text-green-600 transition"
             active-class="text-green-600 font-semibold border-b-2 border-green-600"
           >
-            Image Matching
+            Image Matching and registration
           </RouterLink>
         </li>
         <li>
