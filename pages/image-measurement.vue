@@ -69,7 +69,9 @@
               :key="idx"
               class="hover:bg-green-50"
             >
-              <td class="px-3 py-2 border text-center font-medium">{{ idx + 1 }}</td>
+              <td class="px-3 py-2 border text-center font-medium">
+                {{ idx + 1 }}
+              </td>
               <td class="px-3 py-2 border">{{ pt.x }}</td>
               <td class="px-3 py-2 border">{{ pt.y }}</td>
             </tr>
@@ -77,13 +79,19 @@
         </table>
       </div>
 
-      <!-- Download Button -->
-      <div class="mt-6 text-center">
+      <!-- Action Buttons -->
+      <div class="mt-6 flex justify-center gap-4">
         <button
           @click="downloadCSV"
           class="px-6 py-3 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 transition"
         >
           Download CSV
+        </button>
+        <button
+          @click="resetPoints"
+          class="px-6 py-3 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 transition"
+        >
+          Reset
         </button>
       </div>
     </div>
@@ -113,11 +121,9 @@ function getCoordinates(event) {
 
   const rect = img.getBoundingClientRect();
 
-  // clicked coords relative to displayed image
   const displayX = event.clientX - rect.left;
   const displayY = event.clientY - rect.top;
 
-  // scale back to actual pixel coords
   const scaleX = img.naturalWidth / rect.width;
   const scaleY = img.naturalHeight / rect.height;
 
@@ -131,14 +137,12 @@ function getCoordinates(event) {
 function downloadCSV() {
   if (!clickedPoints.value.length) return;
 
-  // Build CSV string
   let csvContent = "data:text/csv;charset=utf-8,";
   csvContent += "Index,X,Y\n";
   clickedPoints.value.forEach((pt, idx) => {
     csvContent += `${idx + 1},${pt.x},${pt.y}\n`;
   });
 
-  // Create blob link and download
   const encodedUri = encodeURI(csvContent);
   const link = document.createElement("a");
   link.setAttribute("href", encodedUri);
@@ -146,5 +150,10 @@ function downloadCSV() {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+}
+
+// Reset points
+function resetPoints() {
+  clickedPoints.value = [];
 }
 </script>

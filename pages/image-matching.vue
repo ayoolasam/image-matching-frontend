@@ -75,6 +75,7 @@
         <option value="orb">ORB</option>
         <option value="sift">SIFT</option>
         <option value="akaze">AKAZE</option>
+         <option value="brisk">BRISK</option>
       </select>
     </div>
 
