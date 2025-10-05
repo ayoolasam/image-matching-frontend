@@ -64,7 +64,7 @@
     </div>
 
     <!-- Algorithm select -->
-    <div class="w-full max-w-2xl mt-8">
+    <!-- <div class="w-full max-w-2xl mt-8">
       <label class="block text-white mb-2 font-medium">Select Algorithm</label>
       <select
         v-model="selectedAlgorithm"
@@ -77,7 +77,52 @@
         <option value="akaze">AKAZE</option>
          <option value="brisk">BRISK</option>
       </select>
+    </div> -->
+    <!-- Algorithm select -->
+<div class="w-full max-w-2xl mt-8 relative">
+  <label class="block text-white mb-2 font-medium font-montserrat">
+    Select Algorithm
+  </label>
+
+  <!-- Dropdown -->
+  <div class="relative">
+    <div
+      @click="isDropdownOpen = !isDropdownOpen"
+      class="w-full p-3 border border-green-500 rounded-md bg-[#183D3D] text-white flex justify-between items-center cursor-pointer"
+    >
+      <span class="font-montserrat text-[16px]">
+        {{ selectedAlgorithmLabel || 'Choose an algorithm' }}
+      </span>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="w-5 h-5 text-green-400 transform transition-transform duration-200"
+        :class="{ 'rotate-180': isDropdownOpen }"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9l6 6 6-6" />
+      </svg>
     </div>
+
+    <!-- Options -->
+    <transition name="fade">
+      <ul
+        v-if="isDropdownOpen"
+        class="absolute left-0 mt-1 w-full bg-[#183D3D] border border-green-500 rounded-md shadow-lg z-10"
+      >
+        <li
+          v-for="algo in algorithms"
+          :key="algo.value"
+          @click="selectAlgorithm(algo)"
+          class="px-4 py-2 cursor-pointer font-montserrat text-[15px] hover:bg-green-700 hover:text-white text-white"
+        >
+          {{ algo.label }}
+        </li>
+      </ul>
+    </transition>
+  </div>
+</div>
 
     <!-- Process + Reset buttons -->
     <div class="mt-6 flex gap-4">
@@ -178,6 +223,27 @@ const zipBlob = ref(null);
 const resultImages = ref([]);
 const metricsText = ref(null);
 const selectedImage = ref(null);
+
+
+const isDropdownOpen = ref(false);
+
+const algorithms = [
+  { label: "FAST", value: "fast" },
+  { label: "ORB", value: "orb" },
+  { label: "SIFT", value: "sift" },
+  { label: "AKAZE", value: "akaze" },
+  { label: "BRISK", value: "brisk" },
+];
+
+const selectedAlgorithmLabel = computed(() => {
+  const found = algorithms.find((a) => a.value === selectedAlgorithm.value);
+  return found ? found.label : "";
+});
+
+function selectAlgorithm(algo) {
+  selectedAlgorithm.value = algo.value;
+  isDropdownOpen.value = false;
+}
 
 const registeredImage = ref(null);
 const matchedImage = ref(null);
