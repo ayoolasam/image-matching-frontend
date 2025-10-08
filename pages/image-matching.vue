@@ -64,28 +64,12 @@
     </div>
 
     <!-- Algorithm select -->
-    <!-- <div class="w-full max-w-2xl mt-8">
-      <label class="block text-white mb-2 font-medium">Select Algorithm</label>
-      <select
-        v-model="selectedAlgorithm"
-        class="w-full p-3 border border-green-500 rounded-md text-white focus:outline-none"
-      >
-        <option disabled value="">Choose an algorithm</option>
-        <option value="fast">FAST</option>
-        <option value="orb">ORB</option>
-        <option value="sift">SIFT</option>
-        <option value="akaze">AKAZE</option>
-         <option value="brisk">BRISK</option>
-      </select>
-    </div> -->
-    <!-- Algorithm select -->
 <div class="w-full max-w-2xl mt-8 relative">
   <label class="block text-white mb-2 font-medium font-montserrat">
     Select Algorithm
   </label>
 
-  <!-- Dropdown -->
-  <div class="relative">
+  <div class="relative inline-block w-full">
     <div
       @click="isDropdownOpen = !isDropdownOpen"
       class="w-full p-3 border border-green-500 rounded-md bg-[#183D3D] text-white flex justify-between items-center cursor-pointer"
@@ -105,11 +89,10 @@
       </svg>
     </div>
 
-    <!-- Options -->
     <transition name="fade">
       <ul
         v-if="isDropdownOpen"
-        class="absolute left-0 mt-1 w-full bg-[#183D3D] border border-green-500 rounded-md shadow-lg z-10"
+        class="absolute left-0 mt-1 w-full bg-[#183D3D] border border-green-500 rounded-md shadow-lg z-50 h-30 overflow-y-auto"
       >
         <li
           v-for="algo in algorithms"
@@ -123,6 +106,8 @@
     </transition>
   </div>
 </div>
+
+
 
     <!-- Process + Reset buttons -->
     <div class="mt-6 flex gap-4">
