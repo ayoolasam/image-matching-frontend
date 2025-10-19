@@ -56,6 +56,15 @@
             Distance Measurement
           </RouterLink>
         </li>
+         <li>
+          <RouterLink
+            to="/about"
+            class="hover:text-green-600 transition"
+            active-class="text-green-600 font-semibold border-b-2 border-green-600"
+          >
+About
+          </RouterLink>
+        </li>
       </ul>
     </div>
 
@@ -93,6 +102,16 @@
             @click="isOpen = false"
           >
             Distance Measurement
+          </RouterLink>
+        </li>
+         <li>
+          <RouterLink
+            to="/About"
+            class="hover:text-green-600 transition block"
+            active-class="text-green-600 font-semibold"
+            @click="isOpen = false"
+          >
+About
           </RouterLink>
         </li>
       </ul>
