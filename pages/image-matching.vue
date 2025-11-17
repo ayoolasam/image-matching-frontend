@@ -92,7 +92,7 @@
     <transition name="fade">
       <ul
         v-if="isDropdownOpen"
-        class="absolute left-0 mt-1 w-full bg-[#183D3D] border border-green-500 rounded-md shadow-lg z-50 h-30 overflow-y-auto"
+        class=" mt-1 w-full bg-[#183D3D] border border-green-500 rounded-md shadow-lg z-50  overflow-y-auto"
       >
         <li
           v-for="algo in algorithms"
